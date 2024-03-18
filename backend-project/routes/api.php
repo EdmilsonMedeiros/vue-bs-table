@@ -17,8 +17,20 @@ use App\Models\User;
 */
 
 Route::post('/getUsers', function(Request $request){
+
+    $search = $request->searched ?? null;
     $page = $request->page ?? 1;
+
     $users = User::paginate($request->itemsPerPage, ['*'], 'page', $page);
+
+    if($search != null){
+        $users = User::where('name', 'LIKE', "%$search%")
+            ->orWhere('email', 'LIKE', "%$search%")
+            ->orWhere('created_at', 'LIKE', "%$search%")
+            ->orWhere('birthday', 'LIKE', "%$search%")
+            ->paginate($request->itemsPerPage, ['*'], 'page', $page);
+    }
+
     $users['last_page'] = User::count() / $request->itemsPerPage;
     return response()->json($users);
 });

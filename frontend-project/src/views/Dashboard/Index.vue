@@ -4,24 +4,32 @@ import Table from './Components/Table.vue';
 </script>
 
 <template>
-
-    <Table 
+    <Table
         :classes="classesTableArray" 
-        :columns="columnsTableArray" 
+        :columns="columnsTableArray"
+        :columnsRegisters="columnsRegistersTableArray"
         :rows="rowsTableObject" 
         :pagination="rowsTablePagination" 
         :itemsPerPage="itemsTablePerPage"
         :paginationMax="paginationTableLimit"
-        @paginate="paginate"
-        @specific-pagination="specificPagination" />
 
+        :buttons="['delete', 'view', 'edit']"
+        :checkboxes="true"
+        
+        @paginate="getPaginate"
+        @specific-pagination="getSpecificPage"
+        @searched-value="getTableDataSearched" 
+        
+        @destroy-register="onDestroyRegister"
+        @show-register="onShowRegister"
+        @edit-register="onEditRegister" />
 </template>
 
 <script>
 import axios from 'axios';
 
 export default {
-    emit: [ 'nextPage', 'specific-pagination' ],
+    emit: [ 'nextPage', 'specific-pagination', 'searched-value', 'destroy-register', 'edit-register', 'show-register' ],
     components: {
         Table,
     },
@@ -31,7 +39,10 @@ export default {
                 'table-hover', 'striped', 'rounded', 'table-striped',
             ],
             columnsTableArray: [
-                'Nome', 'Email', 'Data Cadastro'
+                'Nome', 'Email', 'Data Cadastro', 'Aniversário',
+            ],
+            columnsRegistersTableArray: [
+                'name', 'email', 'created_at', 'birthday',
             ],
             rowsTableObject: [],
             rowsTablePagination: {
@@ -47,26 +58,42 @@ export default {
     },
 
     methods: {
+        onDestroyRegister(value){
+            // lógica
+            console.log('onDestroyRegister', value)
+        },
+        onEditRegister(value){
+            // lógica
+            console.log('onEditRegister', value)
+        },
+        onShowRegister(value){
+            // lógica
+            console.log('onShowRegister', value)
+        },
+
         getTableData(){
             axios.post('http://127.0.0.1:8000/api/getUsers', {
                 itemsPerPage: this.itemsTablePerPage,
                 page: this.currentTablePage,
             }).then( response => {
                 this.rowsTableObject = response.data.data;
+                delete this.rowsTableObject.last_page;
                 this.rowsTablePagination.page = response.data.current_page;
                 this.rowsTablePagination.pages = response.data.last_page;
-                console.log(response.data);
+                // console.log(response.data);
             }).catch( error => {
                 console.log(error);
             });
         },
 
-        paginate(page){
+        getPaginate(data){
             axios.post('http://127.0.0.1:8000/api/getUsers', {
                 itemsPerPage: this.itemsTablePerPage,
-                page: page,
+                page: data.page,
+                searched: data.value
             }).then( response => {
                 this.rowsTableObject = response.data.data;
+                delete this.rowsTableObject.last_page;
                 this.rowsTablePagination.page = response.data.current_page;
                 this.rowsTablePagination.pages = response.data.last_page;
                 // console.log(response.data);
@@ -74,20 +101,37 @@ export default {
                 console.log(error);
             });
         },
-        specificPagination(page){
-            console.log("SpecificPage: " + page);
+        getSpecificPage(data){
             axios.post('http://127.0.0.1:8000/api/getUsers', {
                 itemsPerPage: this.itemsTablePerPage,
-                page: page,
+                page: data.page,
+                searched: data.value
             }).then( response => {
                 this.rowsTableObject = response.data.data;
+                delete this.rowsTableObject.last_page;
                 this.rowsTablePagination.page = response.data.current_page;
                 this.rowsTablePagination.pages = response.data.last_page;
                 // console.log(response.data);
             }).catch( error => {
                 console.log(error);
             });
-        }
+        },
+
+        getTableDataSearched(data){
+            axios.post('http://127.0.0.1:8000/api/getUsers', {
+                itemsPerPage: this.itemsTablePerPage,
+                page: this.currentTablePage,
+                searched: data.value
+            }).then( response => {
+                this.rowsTableObject = response.data.data;
+                delete this.rowsTableObject.last_page;
+                this.rowsTablePagination.page = response.data.current_page;
+                this.rowsTablePagination.pages = response.data.last_page;
+                // console.log(response.data);
+            }).catch( error => {
+                console.log(error);
+            });
+        },
     }
 }
 </script>
