@@ -58,21 +58,21 @@ export default {
     },
 
     methods: {
-        onDestroyRegister(value){
+        async onDestroyRegister(value){
             // lógica
             console.log('onDestroyRegister', value)
         },
-        onEditRegister(value){
+        async onEditRegister(value){
             // lógica
             console.log('onEditRegister', value)
         },
-        onShowRegister(value){
+        async onShowRegister(value){
             // lógica
             console.log('onShowRegister', value)
         },
 
-        getTableData(){
-            axios.post('http://127.0.0.1:8000/api/getUsers', {
+        async getTableData(){
+            await axios.post('http://127.0.0.1:8000/api/getUsers', {
                 itemsPerPage: this.itemsTablePerPage,
                 page: this.currentTablePage,
             }).then( response => {
@@ -86,8 +86,8 @@ export default {
             });
         },
 
-        getPaginate(data){
-            axios.post('http://127.0.0.1:8000/api/getUsers', {
+        async getPaginate(data){
+            await axios.post('http://127.0.0.1:8000/api/getUsers', {
                 itemsPerPage: this.itemsTablePerPage,
                 page: data.page,
                 searched: data.value
@@ -101,8 +101,8 @@ export default {
                 console.log(error);
             });
         },
-        getSpecificPage(data){
-            axios.post('http://127.0.0.1:8000/api/getUsers', {
+        async getSpecificPage(data){
+            await axios.post('http://127.0.0.1:8000/api/getUsers', {
                 itemsPerPage: this.itemsTablePerPage,
                 page: data.page,
                 searched: data.value
@@ -117,8 +117,8 @@ export default {
             });
         },
 
-        getTableDataSearched(data){
-            axios.post('http://127.0.0.1:8000/api/getUsers', {
+        async getTableDataSearched(data){
+            await axios.post('http://127.0.0.1:8000/api/getUsers', {
                 itemsPerPage: this.itemsTablePerPage,
                 page: this.currentTablePage,
                 searched: data.value

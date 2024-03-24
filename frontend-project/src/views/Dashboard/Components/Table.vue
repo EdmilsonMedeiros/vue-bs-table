@@ -5,23 +5,26 @@
             <div class="row">
                 <div class="container-fluid justify-content-end d-flex">
                     <div class="col-6 justify-content-end d-flex mb-2 p-2">
-                        <div class="float-right">
+                        <div class="">
                             <input class="form-control" type="text" name="searchedValue" v-model="searchedValue" id="" :placeholder="'Buscar'" />
                         </div>
                     </div>
                 </div>
                 <div class="col-12 col-sm-12 col-md-12 col-lg-12">
-                    <table :class="['table', classes]">
+                    <table v-if="tableLoad" :class="['table', classes]">
                         <thead>
                             <tr>
-                                <th v-if="checkboxes"><input type="checkbox" /></th>
+                                <th v-if="checkboxes"><input type="checkbox" :id="'checkAllBoxes'" /></th>
                                 <th v-for="(column, index) in columns" :key="index" scope="col">{{ column }}</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr v-for="(row, index) in rows" :key="index">
-                                <td v-if="checkboxes"><input :id="row.id" type="checkbox" class=""/></td>
+                                <td v-if="checkboxes">
+                                    <input :id="'checkbox'+row.id" :value="row.id" type="checkbox" @change="selectedRow(row.id)" class="select-rows-checkbox"/>
+                                </td>
                                 <td v-for="(columnsRegister) in columnsRegisters">{{ row[columnsRegister] }}</td>
+                                
                                 <td v-if="buttons.length > 0">
                                     <button v-if="buttons.includes('view')" @click="show(row)" type="button" :id="row.id" class="btn m-1 btn-primary">Ver</button>
                                     <button v-if="buttons.includes('edit')" @click="edit(row)" type="button" :id="row.id" class="btn m-1 btn-warning">Editar</button>
@@ -90,21 +93,58 @@ export default {
     },
     data(){
         return {
+            tableLoad: true,
             paginatorDefine: [],
             paginationLimit: this.paginationMax,
             searchedValue: null,
+
+            selectedRows: [],
         }
     },
     watch: {
         searchedValue(value){
             this.search(value)
-        }
+        },
     },
     mounted() {
-        this.cleanObjectRows();
         this.paginateInArrayDivider();
     },
     methods: {
+        loadSelectedCheckboxes() {
+            const checkboxes = document.querySelectorAll('.select-rows-checkbox');
+            checkboxes.forEach(checkbox => {
+                const checkboxId = parseInt(checkbox.value);
+                console.log('CHECKID', checkbox.id); 
+                if (this.selectedRows.includes(checkboxId)) {// Verifica se o ID está presente no array 'selectedRows'
+                    document.getElementById(checkbox.id).checked = true;
+                }
+            });
+        },
+        async tableReload(){
+            this.tableLoad = false;
+            await setTimeout(() => {
+                this.tableLoad = true;
+            }, 1);
+            setTimeout(() => {
+                this.loadSelectedCheckboxes();
+            }, 1);
+        },
+        selectedRow(value){
+            let element = document.getElementById('checkbox'+value);
+            if(!this.selectedRows.includes(value) && element.checked == true){
+                this.selectedRows.push(value);
+            }else if(this.selectedRows.includes(value) && element.checked == false){
+                const index = this.selectedRows.indexOf(value);
+                if (index !== -1) {
+                    element.checked == false;
+                    this.selectedRows.splice(index, 1);
+                }
+            }
+            console.log(this.selectedRows);
+        },
+        selectedAllRows() {
+            // AQUI
+        },
         destroy(value){
             this.$emit('destroy-register' , value);
             // console.log(value);
@@ -117,7 +157,6 @@ export default {
             this.$emit('edit-register' , value);
             // console.log(value);
         },
-
         search(value){
             this.$emit('searched-value', { value: value, page: this.pagination.page+1 });
             this.paginateInArrayDivider();
@@ -133,9 +172,11 @@ export default {
         specificPaginaton(page){
             this.$emit('specific-pagination', { page: page, value: this.searchedValue });
             this.paginateInArrayDivider();
+
         },
-        paginateInArrayDivider() {
-            setTimeout(() => {
+        async paginateInArrayDivider() {
+            await setTimeout(() => {
+                this.tableReload();
                 this.paginatorDefine = [];
                 let contador = this.pagination.page;
                 while (contador < this.pagination.page + this.paginationMax) {
@@ -144,16 +185,8 @@ export default {
                     }
                     contador++;
                 }
-            }, 900);
+            }, 1000);
         },
-        cleanObjectRows() {
-            // Remover a chave "last_page" diretamente
-            setTimeout(() => {
-                if('last_page' in this.rows){
-                    delete this.rows.last_page;
-                }
-            }, 400);
-        }
     },
 }
 </script>
