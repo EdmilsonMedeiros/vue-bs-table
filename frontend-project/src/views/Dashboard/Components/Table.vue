@@ -14,7 +14,7 @@
                     <table v-if="tableLoad" :class="['table', classes]">
                         <thead>
                             <tr>
-                                <th v-if="checkboxes"><input type="checkbox" :id="'checkAllBoxes'" /></th>
+                                <th v-if="checkboxes"><input type="checkbox" :id="'checkAllBoxes'" @change="selectedAllRows()" /></th>
                                 <th v-for="(column, index) in columns" :key="index" scope="col">{{ column }}</th>
                             </tr>
                         </thead>
@@ -110,16 +110,6 @@ export default {
         this.paginateInArrayDivider();
     },
     methods: {
-        loadSelectedCheckboxes() {
-            const checkboxes = document.querySelectorAll('.select-rows-checkbox');
-            checkboxes.forEach(checkbox => {
-                const checkboxId = parseInt(checkbox.value);
-                console.log('CHECKID', checkbox.id); 
-                if (this.selectedRows.includes(checkboxId)) {// Verifica se o ID está presente no array 'selectedRows'
-                    document.getElementById(checkbox.id).checked = true;
-                }
-            });
-        },
         async tableReload(){
             this.tableLoad = false;
             await setTimeout(() => {
@@ -128,6 +118,32 @@ export default {
             setTimeout(() => {
                 this.loadSelectedCheckboxes();
             }, 1);
+        },
+        loadSelectedCheckboxes() {
+            const checkboxes = document.querySelectorAll('.select-rows-checkbox');
+            checkboxes.forEach(checkbox => {
+                const checkboxId = parseInt(checkbox.value);
+                if (this.selectedRows.includes(checkboxId)) {
+                    document.getElementById(checkbox.id).checked = true;
+                }
+            });
+        },
+        selectedAllRows() {
+            const checkboxes = document.querySelectorAll('.select-rows-checkbox');
+            checkboxes.forEach(checkbox => {
+                const checkboxId = parseInt(checkbox.value);
+                if (!this.selectedRows.includes(checkboxId) && !checkbox.checked) { 
+                    this.selectedRows.push(parseInt(checkbox.value));
+                    checkbox.checked = true;
+                }else if(this.selectedRows.includes(checkboxId) && checkbox.checked){
+                    let index = this.selectedRows.indexOf(parseInt(checkbox.value));
+                    if(index !== -1){
+                        this.selectedRows.splice(index, 1);
+                    }
+                    checkbox.checked = false;
+                }
+            });
+            
         },
         selectedRow(value){
             let element = document.getElementById('checkbox'+value);
@@ -141,9 +157,6 @@ export default {
                 }
             }
             console.log(this.selectedRows);
-        },
-        selectedAllRows() {
-            // AQUI
         },
         destroy(value){
             this.$emit('destroy-register' , value);
