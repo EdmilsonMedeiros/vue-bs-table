@@ -14,14 +14,14 @@
                     <table v-if="tableLoad" :class="['table', classes]">
                         <thead>
                             <tr>
-                                <th v-if="checkboxes"><input type="checkbox" :id="'checkAllBoxes'" @change="selectedAllRows()" /></th>
+                                <th v-if="checkboxes"><input type="checkbox" :id="'checkAllBoxes'" class="" @change="selectedAllRows()" style="width: 20px; height: 20px;" /></th>
                                 <th v-for="(column, index) in columns" :key="index" scope="col">{{ column }}</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr v-for="(row, index) in rows" :key="index">
                                 <td v-if="checkboxes">
-                                    <input :id="'checkbox'+row.id" :value="row.id" type="checkbox" @change="selectedRow(row.id)" class="select-rows-checkbox"/>
+                                    <input :id="'checkbox'+row.id" :value="row.id" type="checkbox" @change="selectedRow(row.id)" class="select-rows-checkbox" style="width: 20px; height: 20px;"/>
                                 </td>
                                 <td v-for="(columnsRegister) in columnsRegisters">{{ row[columnsRegister] }}</td>
                                 
