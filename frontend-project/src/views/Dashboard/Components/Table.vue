@@ -121,18 +121,25 @@ export default {
         },
         loadSelectedCheckboxes() {
             const checkboxes = document.querySelectorAll('.select-rows-checkbox');
+            let countCheckeds = 0;
+            let countTotal = 0;
             checkboxes.forEach(checkbox => {
+                countTotal++;
                 const checkboxId = parseInt(checkbox.value);
                 if (this.selectedRows.includes(checkboxId)) {
+                    countCheckeds++;
                     document.getElementById(checkbox.id).checked = true;
                 }
             });
+            if(countCheckeds == countTotal){
+                document.getElementById('checkAllBoxes').checked = true;
+            }
         },
         selectedAllRows() {
             const checkboxes = document.querySelectorAll('.select-rows-checkbox');
             checkboxes.forEach(checkbox => {
                 const checkboxId = parseInt(checkbox.value);
-                if (!this.selectedRows.includes(checkboxId) && !checkbox.checked) { 
+                if (!this.selectedRows.includes(checkboxId) && !checkbox.checked) {
                     this.selectedRows.push(parseInt(checkbox.value));
                     checkbox.checked = true;
                 }else if(this.selectedRows.includes(checkboxId) && checkbox.checked){
@@ -143,7 +150,6 @@ export default {
                     checkbox.checked = false;
                 }
             });
-            
         },
         selectedRow(value){
             let element = document.getElementById('checkbox'+value);
@@ -156,7 +162,7 @@ export default {
                     this.selectedRows.splice(index, 1);
                 }
             }
-            console.log(this.selectedRows);
+            
         },
         destroy(value){
             this.$emit('destroy-register' , value);
