@@ -25,10 +25,10 @@
                     </div>
                 </div>
                 <div :class="['col-12 col-sm-12 col-md-12 col-lg-12 p-3']">
-                    <table v-if="tableLoad" :class="['table', 'table-striped']">
+                    <table :class="['table', 'table-striped']">
                         <thead>
                             <tr>
-                                <th v-if="checkboxes"><input type="checkbox" :id="'checkAllBoxes'" @change="selectedAllRows()" style="width: 20px; height: 20px;" /></th>
+                                <th v-if="checkboxes && tableLoad"><input type="checkbox" :id="'checkAllBoxes'" @change="selectedAllRows()" style="width: 20px; height: 20px;" /></th>
                                 <th v-for="(column, index) in columns" :key="index" scope="col">{{ column }} <a href="#" @click="selectionSortBy(index)" :class="['bi bi-arrow-down p-2', sortByIndex == index ? 'text-primary' : 'text-secondary']"></a></th>
                                 <th v-if="buttons.length > 0">Ações</th>
                             </tr>
@@ -37,7 +37,7 @@
                             <div v-if="!totalRegisters" :class="['text-start']"><h3 :class="['text-secondary']">Nenhum Registro</h3></div>
                             <tr v-for="(row, index) in rows" :key="index">
                                 
-                                <td v-if="checkboxes">
+                                <td v-if="checkboxes && tableLoad">
                                     <input :id="'checkbox'+row.id" :value="row.id" type="checkbox" @change="selectedRow(row.id)" :class="['select-rows-checkbox']" style="width: 20px; height: 20px;"/>
                                 </td>
                                 <td v-for="(columnsRegister) in columnsRegisters">{{ row[columnsRegister] }}</td>
