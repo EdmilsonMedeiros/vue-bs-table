@@ -5,7 +5,6 @@ import Table from './Components/Table.vue';
 
 <template>
     <Table
-        :classes="classesTableArray" 
         :columns="columnsTableArray"
         :columnsRegisters="columnsRegistersTableArray"
         :rows="rowsTableObject" 
@@ -13,7 +12,9 @@ import Table from './Components/Table.vue';
         :itemsPerPage="itemsTablePerPage"
         :paginationMax="paginationTableLimit"
 
-        :totalColumnsRegisters="totalColumnsRegisters"
+        :totalRegisters="totalRegisters"
+        :from="fromRegister"
+        :to="toRegister"
         :buttons="['delete', 'view', 'edit']"
         :deleteAllButton="true"
         :checkboxes="true"
@@ -21,7 +22,6 @@ import Table from './Components/Table.vue';
         @paginate="getPaginate"
         @specific-pagination="getSpecificPage"
         @searched-value="getTableDataSearched" 
-        
         @destroy-register="onDestroyRegister"
         @show-register="onShowRegister"
         @edit-register="onEditRegister"
@@ -33,16 +33,23 @@ import Table from './Components/Table.vue';
 <script>
 import axios from 'axios';
 export default {
-    emit: ['sort-by' ,'nextPage', 'specific-pagination', 'searched-value', 'destroy-register', 'edit-register', 'show-register', 'destroy-many-registers', 'items-per-page' ],
+    emit: [
+        'sort-by' ,
+        'nextPage', 
+        'specific-pagination', 
+        'searched-value', 
+        'destroy-register', 
+        'edit-register', 
+        'show-register', 
+        'destroy-many-registers', 
+        'items-per-page' 
+    ],
     components: {
         Table,
     },
     data(){
         return {
             requestUrl: 'http://127.0.0.1:8000/api/getUsers',
-            classesTableArray: [
-                'table-hover', 'striped', 'rounded', 'table-striped',
-            ],
             columnsTableArray: [
                 'Nome', 'Email', 'Data Cadastro', 'Aniversário',
             ],
@@ -56,7 +63,9 @@ export default {
             itemsTablePerPage: 10,
             paginationTableLimit: 3,
             currentTablePage: 1,
-            totalColumnsRegisters: Number,
+            totalRegisters: Number,
+            fromRegister: Number,
+            toRegister: Number,
         }
     },
     mounted(){
@@ -80,11 +89,12 @@ export default {
                 itemsPerPage: this.itemsTablePerPage,
                 page: this.currentTablePage,
             }).then( response => {
-                this.rowsTableObject = response.data.data;
-                this.totalColumnsRegisters = response.data.total;
-                delete this.rowsTableObject.last_page;
-                this.rowsTablePagination.page = response.data.current_page;
-                this.rowsTablePagination.pages = response.data.last_page;
+                this.totalRegisters             = response.data.total;
+                this.rowsTableObject            = response.data.data; delete this.rowsTableObject.last_page;
+                this.rowsTablePagination.page   = response.data.current_page;
+                this.rowsTablePagination.pages  = response.data.last_page;
+                this.fromRegister               = response.data.from;
+                this.toRegister                 = response.data.to;
             }).catch( error => {
                 console.log(error);
             });
@@ -98,11 +108,12 @@ export default {
                 searched: data.value,
                 sortBy: data.sortBy,
             }).then( response => {
-                this.totalColumnsRegisters = response.data.total;
-                this.rowsTableObject = response.data.data;
-                delete this.rowsTableObject.last_page;
-                this.rowsTablePagination.page = response.data.current_page;
-                this.rowsTablePagination.pages = response.data.last_page;
+                this.totalRegisters             = response.data.total;
+                this.rowsTableObject            = response.data.data; delete this.rowsTableObject.last_page;
+                this.rowsTablePagination.page   = response.data.current_page;
+                this.rowsTablePagination.pages  = response.data.last_page;
+                this.fromRegister               = response.data.from;
+                this.toRegister                 = response.data.to;
             }).catch( error => {
                 console.log(error);
             });
@@ -115,11 +126,12 @@ export default {
                 searched: data.value,
                 sortBy: data.sortBy,
             }).then( response => {
-                this.totalColumnsRegisters = response.data.total;
-                this.rowsTableObject = response.data.data;
-                delete this.rowsTableObject.last_page;
-                this.rowsTablePagination.page = response.data.current_page;
-                this.rowsTablePagination.pages = response.data.last_page;
+                this.totalRegisters             = response.data.total;
+                this.rowsTableObject            = response.data.data; delete this.rowsTableObject.last_page;
+                this.rowsTablePagination.page   = response.data.current_page;
+                this.rowsTablePagination.pages  = response.data.last_page;
+                this.fromRegister               = response.data.from;
+                this.toRegister                 = response.data.to;
             }).catch( error => {
                 console.log(error);
             });
@@ -132,11 +144,12 @@ export default {
                 searched: data.value,
                 sortBy: data.sortBy,
             }).then( response => {
-                this.totalColumnsRegisters = response.data.total;
-                this.rowsTableObject = response.data.data;
-                delete this.rowsTableObject.last_page;
-                this.rowsTablePagination.page = response.data.current_page;
-                this.rowsTablePagination.pages = response.data.last_page;
+                this.totalRegisters             = response.data.total;
+                this.rowsTableObject            = response.data.data; delete this.rowsTableObject.last_page;
+                this.rowsTablePagination.page   = response.data.current_page;
+                this.rowsTablePagination.pages  = response.data.last_page;
+                this.fromRegister               = response.data.from;
+                this.toRegister                 = response.data.to;
             }).catch( error => {
                 console.log(error);
             });
@@ -149,11 +162,12 @@ export default {
                 searched: data.value,
                 sortBy: data.sortBy,
             }).then( response => {
-                this.totalColumnsRegisters = response.data.total;
-                this.rowsTableObject = response.data.data;
-                delete this.rowsTableObject.last_page;
-                this.rowsTablePagination.page = response.data.current_page;
-                this.rowsTablePagination.pages = response.data.last_page;
+                this.totalRegisters             = response.data.total;
+                this.rowsTableObject            = response.data.data; delete this.rowsTableObject.last_page;
+                this.rowsTablePagination.page   = response.data.current_page;
+                this.rowsTablePagination.pages  = response.data.last_page;
+                this.fromRegister               = response.data.from;
+                this.toRegister                 = response.data.to;
             }).catch( error => {
                 console.log(error);
             });
@@ -166,11 +180,12 @@ export default {
                 searched: data.value,
                 sortBy: data.sortBy,
             }).then( response => {
-                this.totalColumnsRegisters = response.data.total;
-                this.rowsTableObject = response.data.data;
-                delete this.rowsTableObject.last_page;
-                this.rowsTablePagination.page = response.data.current_page;
-                this.rowsTablePagination.pages = response.data.last_page;
+                this.totalRegisters             = response.data.total;
+                this.rowsTableObject            = response.data.data; delete this.rowsTableObject.last_page;
+                this.rowsTablePagination.page   = response.data.current_page;
+                this.rowsTablePagination.pages  = response.data.last_page;
+                this.fromRegister               = response.data.from;
+                this.toRegister                 = response.data.to;
             }).catch( error => {
                 console.log(error);
             });

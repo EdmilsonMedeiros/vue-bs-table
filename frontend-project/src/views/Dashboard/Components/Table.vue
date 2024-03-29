@@ -25,7 +25,7 @@
                     </div>
                 </div>
                 <div :class="['col-12 col-sm-12 col-md-12 col-lg-12 p-3']">
-                    <table v-if="tableLoad" :class="['table', classes]">
+                    <table v-if="tableLoad" :class="['table', 'table-striped']">
                         <thead>
                             <tr>
                                 <th v-if="checkboxes"><input type="checkbox" :id="'checkAllBoxes'" @change="selectedAllRows()" style="width: 20px; height: 20px;" /></th>
@@ -34,7 +34,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <div v-if="!totalColumnsRegisters" :class="['text-start']"><h3 :class="['text-secondary']">Nenhum Registro</h3></div>
+                            <div v-if="!totalRegisters" :class="['text-start']"><h3 :class="['text-secondary']">Nenhum Registro</h3></div>
                             <tr v-for="(row, index) in rows" :key="index">
                                 
                                 <td v-if="checkboxes">
@@ -52,7 +52,8 @@
                     </table>
                     <div class="container-pagination d-flex">
                         <div class="col-6 justify-content-start">
-                            <h3 class="fs-6">Página {{ pagination.page }} de {{ pagination.pages }} páginas ({{ totalColumnsRegisters }} registros)</h3>
+                            <!-- <h3 class="fs-6">Página {{ pagination.page }} de {{ pagination.pages }} páginas ({{ totalColumnsRegisters }} registros)</h3> -->
+                            <h3 class="fs-6">Mostrado {{ from }} a {{ to - 1 }} de {{ totalRegisters }} registros.</h3>
                         </div>
                         <div class="col-6 justify-content-right">
                             <nav v-if="pagination.pages > 1" aria-label="Page navigation">
@@ -96,17 +97,18 @@
 <script>
 export default {
     props: {
-        classes: Object,
         columns: Object,
         columnsRegisters: Object,
         rows: Object,
+        from: Number,
+        to: Number,
         pagination: Object,
         itemsPerPage: Number,
         paginationMax: Number,
         buttons: Array, // [ 'edit', 'delete', 'view']
         checkboxes: Boolean,
         deleteAllButton: Boolean,
-        totalColumnsRegisters: Number,
+        totalRegisters: Number,
     },
     data(){
         return {
@@ -152,6 +154,8 @@ export default {
             });
             if(countCheckeds == countTotal){
                 document.getElementById('checkAllBoxes').checked = true;
+            }else if(!countCheckeds == countTotal){
+                document.getElementById('checkAllBoxes').checked = false;
             }
         },
         selectedAllRows() {
@@ -181,6 +185,8 @@ export default {
                     this.selectedRows.splice(index, 1);
                 }
             }
+            
+            this.loadSelectedCheckboxes();
         },
         destroy(value){
             this.$emit('destroy-register' , value);
