@@ -1,47 +1,64 @@
 <template>
     <div class="container-fluid container-principal">
-            <h1 class="fs-2 text-center">Table Component</h1>
         <div class="container-table">
-            <div class="row">
-                <div class="container-fluid justify-content-end d-flex">
-                    <div class="col-6 justify-content-end d-flex mb-2 p-2">
+            <div class="row p-1">
+                <div class="justify-content-start d-flex">
+                    <div class="col-6 justify-content-start d-flex mb-2">
+                        <div class="p-2">
+                            <select :class="['form-select']" name="itemsPerPage" id="itemsPerPage" @change="selectionItemsPerPage()">
+                                <option :value="selectedItemsPerPage" selected>{{ selectedItemsPerPage }}</option>
+                                <option :value="10">10</option>
+                                <option :value="25">25</option>
+                                <option :value="50">50</option>
+                                <option :value="100">100</option>
+                            </select>
+                        </div>
+                        <div v-if="deleteAllButton && selectedRows.length > 0" class="p-2">
+                            <button type="button" :class="['btn', 'btn-danger']" @click="destroyMany">{{ this.selectedRows.length }} <i class="bi bi-trash"></i> Deletar Selecionados</button>
+                        </div>
+                    </div>
+
+                    <div :class="['col-6 col-md-4 offset-md-2 col-sm-4 offset-sm-2 mb-2 p-2 justify-content-end']">
                         <div class="">
                             <input class="form-control" type="text" name="searchedValue" v-model="searchedValue" id="" :placeholder="'Buscar'" />
                         </div>
                     </div>
                 </div>
-                <div class="col-12 col-sm-12 col-md-12 col-lg-12">
+                <div :class="['col-12 col-sm-12 col-md-12 col-lg-12 p-3']">
                     <table v-if="tableLoad" :class="['table', classes]">
                         <thead>
                             <tr>
-                                <th v-if="checkboxes"><input type="checkbox" :id="'checkAllBoxes'" class="" @change="selectedAllRows()" style="width: 20px; height: 20px;" /></th>
-                                <th v-for="(column, index) in columns" :key="index" scope="col">{{ column }}</th>
+                                <th v-if="checkboxes"><input type="checkbox" :id="'checkAllBoxes'" @change="selectedAllRows()" style="width: 20px; height: 20px;" /></th>
+                                <th v-for="(column, index) in columns" :key="index" scope="col">{{ column }} <a href="#" @click="selectionSortBy(index)" :class="['bi bi-arrow-down p-2', sortByIndex == index ? 'text-primary' : 'text-secondary']"></a></th>
+                                <th v-if="buttons.length > 0">Ações</th>
                             </tr>
                         </thead>
                         <tbody>
+                            <div v-if="!totalColumnsRegisters" :class="['text-start']"><h3 :class="['text-secondary']">Nenhum Registro</h3></div>
                             <tr v-for="(row, index) in rows" :key="index">
+                                
                                 <td v-if="checkboxes">
-                                    <input :id="'checkbox'+row.id" :value="row.id" type="checkbox" @change="selectedRow(row.id)" class="select-rows-checkbox" style="width: 20px; height: 20px;"/>
+                                    <input :id="'checkbox'+row.id" :value="row.id" type="checkbox" @change="selectedRow(row.id)" :class="['select-rows-checkbox']" style="width: 20px; height: 20px;"/>
                                 </td>
                                 <td v-for="(columnsRegister) in columnsRegisters">{{ row[columnsRegister] }}</td>
                                 
                                 <td v-if="buttons.length > 0">
-                                    <button v-if="buttons.includes('view')" @click="show(row)" type="button" :id="row.id" class="btn m-1 btn-primary">Ver</button>
-                                    <button v-if="buttons.includes('edit')" @click="edit(row)" type="button" :id="row.id" class="btn m-1 btn-warning">Editar</button>
-                                    <button v-if="buttons.includes('delete')" @click="destroy(row)" type="button" :id="row.id" class="btn m-1 btn-danger">Deletar</button>
+                                    <button data-bs-toggle="tooltip" data-bs-title="Visualizar" v-if="buttons.includes('view')" @click="show(row)" type="button" :id="row.id" class="btn m-1 btn-primary"><i class="bi bi-eye text-white"></i></button>
+                                    <button v-if="buttons.includes('edit')" @click="edit(row)" type="button" :id="row.id" class="btn m-1 btn-warning"><i class="bi bi-pencil text-white"></i></button>
+                                    <button v-if="buttons.includes('delete')" @click="destroy(row)" type="button" :id="row.id" class="btn m-1 btn-danger"><i class="bi bi-trash text-white"></i></button>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                     <div class="container-pagination d-flex">
                         <div class="col-6 justify-content-start">
-                            <h3 class="fs-6">Mostrando página {{ pagination.page }} de {{ pagination.pages }} páginas</h3>
+                            <h3 class="fs-6">Página {{ pagination.page }} de {{ pagination.pages }} páginas ({{ totalColumnsRegisters }} registros)</h3>
                         </div>
                         <div class="col-6 justify-content-right">
                             <nav v-if="pagination.pages > 1" aria-label="Page navigation">
                                 <ul class="pagination justify-content-end">
                                     <li class="page-item" :class="pagination.page <= 1 ? 'disabled' : ''">
-                                        <a class="page-link" href="#" @click="paginatePrevious()">Previous</a>
+                                        <a class="page-link" href="#" @click="paginatePrevious()">Anterior</a>
                                     </li>
 
                                     <li v-if="pagination.page > 1 && pagination.page <= pagination.pages" class="page-item">
@@ -65,7 +82,7 @@
                                     </li>
 
                                     <li :class="['page-item', !pagination.pages >= 1 ? 'disabled' : '' || pagination.page == pagination.pages ? 'disabled' : '', ]">
-                                        <a class="page-link" href="#" @click="paginateNext()">Next</a>
+                                        <a class="page-link" href="#" @click="paginateNext()">Próximo</a>
                                     </li>
                                 </ul>
                             </nav>
@@ -76,9 +93,7 @@
         </div>
     </div>
 </template>
-
 <script>
-
 export default {
     props: {
         classes: Object,
@@ -90,6 +105,8 @@ export default {
         paginationMax: Number,
         buttons: Array, // [ 'edit', 'delete', 'view']
         checkboxes: Boolean,
+        deleteAllButton: Boolean,
+        totalColumnsRegisters: Number,
     },
     data(){
         return {
@@ -97,13 +114,15 @@ export default {
             paginatorDefine: [],
             paginationLimit: this.paginationMax,
             searchedValue: null,
-
+            selectedItemsPerPage: this.itemsPerPage,
             selectedRows: [],
+            sortBy: null,
+            sortByIndex: null,
         }
     },
     watch: {
-        searchedValue(value){
-            this.search(value)
+        searchedValue(){
+            this.search()
         },
     },
     mounted() {
@@ -162,34 +181,74 @@ export default {
                     this.selectedRows.splice(index, 1);
                 }
             }
-            
         },
         destroy(value){
             this.$emit('destroy-register' , value);
-            // console.log(value);
+        },
+        destroyMany(){
+            this.$emit('destroy-many-registers' , this.selectedRows);
         },
         show(value){
             this.$emit('show-register' , value);
-            // console.log(value);
         },
         edit(value){
             this.$emit('edit-register' , value);
-            // console.log(value);
         },
-        search(value){
-            this.$emit('searched-value', { value: value, page: this.pagination.page+1 });
+        async selectionSortBy(index){
+            this.sortByIndex = index;
+            this.sortBy = await this.columnsRegisters[index];
+            this.$emit('sort-by', {
+                page: this.pagination.page, 
+                value: this.searchedValue, 
+                perpage: this.selectedItemsPerPage,
+                sortBy: this.sortBy,
+            });
+        },
+        async selectionItemsPerPage(){
+            this.pagination.page = 1;
+            this.selectedItemsPerPage = await parseInt(document.getElementById('itemsPerPage').value);
+            this.$emit('items-per-page', { 
+                page: this.pagination.page,
+                value: this.searchedValue, 
+                perpage: this.selectedItemsPerPage,
+                sortBy: this.sortBy,
+             });
+        },
+        search(){
+            console.log('search', this.searchedValue);
+            this.$emit('searched-value', { 
+                value: this.searchedValue, 
+                page: this.pagination.page, 
+                perpage: this.selectedItemsPerPage,
+                sortBy: this.sortBy,
+            });
             this.paginateInArrayDivider();
         },
         paginateNext(){
-            this.$emit('paginate', { page: this.pagination.page+1, value: this.searchedValue });
+            this.$emit('paginate', { 
+                value: this.searchedValue, 
+                page: this.pagination.page+1, 
+                perpage: this.selectedItemsPerPage,
+                sortBy: this.sortBy,
+             });
             this.paginateInArrayDivider();
         },
         paginatePrevious(){
-            this.$emit('paginate', { page: this.pagination.page-1, value: this.searchedValue });
+            this.$emit('paginate', { 
+                value: this.searchedValue, 
+                page: this.pagination.page-1, 
+                perpage: this.selectedItemsPerPage,
+                sortBy: this.sortBy,
+             });
             this.paginateInArrayDivider();
         },
         specificPaginaton(page){
-            this.$emit('specific-pagination', { page: page, value: this.searchedValue });
+            this.$emit('specific-pagination', { 
+                value: this.searchedValue, 
+                page: page, 
+                perpage: this.selectedItemsPerPage,
+                sortBy: this.sortBy,
+             });
             this.paginateInArrayDivider();
 
         },

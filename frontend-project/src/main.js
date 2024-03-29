@@ -10,6 +10,7 @@ import $ from 'jquery';
 import jquery from 'jquery/dist/jquery'; // Import do jQuery
 import './assets/main.css'
 
+
 const app = createApp(App)
 
 app.use(router)
