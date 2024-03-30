@@ -52,8 +52,7 @@
                     </table>
                     <div class="container-pagination d-flex">
                         <div class="col-6 justify-content-start">
-                            <!-- <h3 class="fs-6">Página {{ pagination.page }} de {{ pagination.pages }} páginas ({{ totalColumnsRegisters }} registros)</h3> -->
-                            <h3 class="fs-6">Mostrado {{ from }} a {{ to - 1 }} de {{ totalRegisters }} registros.</h3>
+                            <h3 class="fs-6">Mostrando de {{ from }} até {{ to - 1 }} de {{ totalRegisters }} registros.</h3>
                         </div>
                         <div class="col-6 justify-content-right">
                             <nav v-if="pagination.pages > 1" aria-label="Page navigation">
@@ -178,15 +177,30 @@ export default {
             let element = document.getElementById('checkbox'+value);
             if(!this.selectedRows.includes(value) && element.checked == true){
                 this.selectedRows.push(value);
+
+                const checkboxes    = document.querySelectorAll('.select-rows-checkbox');
+                let countCheckeds   = 0;
+                let countTotal      = checkboxes.length;
+
+                checkboxes.forEach(checkbox => {
+                    if(checkbox.checked == true){
+                        countCheckeds++;
+                    }
+                });
+
+                if(countCheckeds < countTotal){
+                    document.getElementById('checkAllBoxes').checked = false;
+                }else if(countCheckeds == countTotal){
+                    document.getElementById('checkAllBoxes').checked = true;
+                }
             }else if(this.selectedRows.includes(value) && element.checked == false){
                 const index = this.selectedRows.indexOf(value);
                 if (index !== -1) {
                     element.checked == false;
                     this.selectedRows.splice(index, 1);
+                    document.getElementById('checkAllBoxes').checked = false;
                 }
             }
-            
-            this.loadSelectedCheckboxes();
         },
         destroy(value){
             this.$emit('destroy-register' , value);
