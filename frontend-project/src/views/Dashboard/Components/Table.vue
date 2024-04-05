@@ -261,7 +261,6 @@ export default {
             this.paginateInArrayDivider();
         },
         search(){
-            console.log('search', this.searchedValue);
             this.$emit('searched-value', 
                 this.getTableSet()
             );
