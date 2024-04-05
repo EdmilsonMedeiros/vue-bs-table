@@ -27,13 +27,6 @@ import Table from './Components/Table.vue';
 
         @get-table-data="getTableData"
         />
-        <!-- 
-        @paginate="getTableData"
-        @specific-pagination="getTableData"
-        @searched-value="getTableData"
-        @items-per-page="getTableData"
-        @sort-by="getTableData"
-         -->
 </template>
 
 <script>
