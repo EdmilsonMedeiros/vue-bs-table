@@ -107,6 +107,7 @@ export default {
                 page: data.page,
                 searched: data.value,
                 sortBy: data.sortBy,
+                orderAs: data.orderAs,
             }).then( response => {
                 this.totalRegisters             = response.data.total;
                 this.rowsTableObject            = response.data.data; delete this.rowsTableObject.last_page;
@@ -125,6 +126,7 @@ export default {
                 page: data.page,
                 searched: data.value,
                 sortBy: data.sortBy,
+                orderAs: data.orderAs,
             }).then( response => {
                 this.totalRegisters             = response.data.total;
                 this.rowsTableObject            = response.data.data; delete this.rowsTableObject.last_page;
@@ -143,6 +145,7 @@ export default {
                 page: data.page,
                 searched: data.value,
                 sortBy: data.sortBy,
+                orderAs: data.orderAs,
             }).then( response => {
                 this.totalRegisters             = response.data.total;
                 this.rowsTableObject            = response.data.data; delete this.rowsTableObject.last_page;
@@ -161,6 +164,7 @@ export default {
                 page: data.page,
                 searched: data.value,
                 sortBy: data.sortBy,
+                orderAs: data.orderAs,
             }).then( response => {
                 this.totalRegisters             = response.data.total;
                 this.rowsTableObject            = response.data.data; delete this.rowsTableObject.last_page;
@@ -179,6 +183,7 @@ export default {
                 page: this.currentTablePage,
                 searched: data.value,
                 sortBy: data.sortBy,
+                orderAs: data.orderAs,
             }).then( response => {
                 this.totalRegisters             = response.data.total;
                 this.rowsTableObject            = response.data.data; delete this.rowsTableObject.last_page;

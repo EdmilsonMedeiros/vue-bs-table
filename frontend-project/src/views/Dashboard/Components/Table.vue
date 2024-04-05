@@ -29,7 +29,10 @@
                         <thead>
                             <tr>
                                 <th v-if="checkboxes && tableLoad"><input type="checkbox" :id="'checkAllBoxes'" @change="selectedAllRows()" style="width: 20px; height: 20px;" /></th>
-                                <th v-for="(column, index) in columns" :key="index" scope="col">{{ column }} <a href="#" @click="selectionSortBy(index)" :class="['bi bi-arrow-down p-2', sortByIndex == index ? 'text-primary' : 'text-secondary']"></a></th>
+                                <th v-for="(column, index) in columns" 
+                                :key="index" scope="col">{{ column }} 
+                                    <a href="#" @click="selectionSortBy(index)" 
+                                    :class="['bi p-2', sortByIndex == index ? 'text-primary' : 'text-secondary', sortByIndex == index && orderAs == 'ASC' ? 'bi-arrow-down' : 'bi-arrow-down-up', sortByIndex == index && orderAs == 'DESC' ? 'bi-arrow-up' : 'bi-arrow-down-up', ]"></a></th>
                                 <th v-if="buttons.length > 0">Ações</th>
                             </tr>
                         </thead>
@@ -118,6 +121,7 @@ export default {
             selectedItemsPerPage: this.itemsPerPage,
             selectedRows: [],
             sortBy: null,
+            orderAs: null,
             sortByIndex: null,
         }
     },
@@ -215,13 +219,30 @@ export default {
             this.$emit('edit-register' , value);
         },
         async selectionSortBy(index){
-            this.sortByIndex = index;
-            this.sortBy = await this.columnsRegisters[index];
+            switch(await this.orderAs){
+                case null:
+                    this.orderAs = 'ASC'
+                    this.sortByIndex = index;
+                    this.sortBy = await this.columnsRegisters[index];
+                    break;
+                case 'ASC':
+                    this.orderAs = 'DESC'
+                    this.sortByIndex = index;
+                    this.sortBy = await this.columnsRegisters[index];
+                    break;
+                case 'DESC':
+                    this.orderAs = null
+                    this.sortBy = null;
+                    this.sortByIndex = null;
+                    break;
+            }
+            
             this.$emit('sort-by', {
                 page: this.pagination.page, 
                 value: this.searchedValue, 
                 perpage: this.selectedItemsPerPage,
                 sortBy: this.sortBy,
+                orderAs: this.orderAs,
             });
         },
         async selectionItemsPerPage(){
@@ -232,6 +253,7 @@ export default {
                 value: this.searchedValue, 
                 perpage: this.selectedItemsPerPage,
                 sortBy: this.sortBy,
+                orderAs: this.orderAs,
              });
         },
         search(){
@@ -241,6 +263,7 @@ export default {
                 page: this.pagination.page, 
                 perpage: this.selectedItemsPerPage,
                 sortBy: this.sortBy,
+                orderAs: this.orderAs,
             });
             this.paginateInArrayDivider();
         },
@@ -250,6 +273,7 @@ export default {
                 page: this.pagination.page+1, 
                 perpage: this.selectedItemsPerPage,
                 sortBy: this.sortBy,
+                orderAs: this.orderAs,
              });
             this.paginateInArrayDivider();
         },
@@ -259,6 +283,7 @@ export default {
                 page: this.pagination.page-1, 
                 perpage: this.selectedItemsPerPage,
                 sortBy: this.sortBy,
+                orderAs: this.orderAs,
              });
             this.paginateInArrayDivider();
         },
@@ -268,6 +293,7 @@ export default {
                 page: page, 
                 perpage: this.selectedItemsPerPage,
                 sortBy: this.sortBy,
+                orderAs: this.orderAs,
              });
             this.paginateInArrayDivider();
 
