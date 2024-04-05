@@ -25,18 +25,23 @@ import Table from './Components/Table.vue';
         @edit-register="onEditRegister"
         @destroy-many-registers="onDestroyManyRegisters"
 
+        @get-table-data="getTableData"
+        />
+        <!-- 
         @paginate="getTableData"
         @specific-pagination="getTableData"
         @searched-value="getTableData"
         @items-per-page="getTableData"
         @sort-by="getTableData"
-        />
+         -->
 </template>
 
 <script>
 import axios from 'axios';
 export default {
     emit: [
+        'get-table-data',
+
         'sort-by' ,
         'nextPage', 
         'specific-pagination', 

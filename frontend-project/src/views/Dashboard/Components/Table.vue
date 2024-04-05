@@ -107,7 +107,7 @@ export default {
         pagination: Object,
         itemsPerPage: 10,
         paginationMax: Number,
-        buttons: Array, // [ 'edit', 'delete', 'view']
+        buttons: Array,
         checkboxes: Boolean,
         deleteAllButton: Boolean,
         totalRegisters: null,
@@ -134,7 +134,7 @@ export default {
         this.paginateInArrayDivider();
     },
     methods: {
-        getTableSet(){
+        emitGetTableData(){
             let data = {
                 page: this.pagination.page, 
                 value: this.searchedValue, 
@@ -142,7 +142,7 @@ export default {
                 sortBy: this.sortBy,
                 orderAs: this.orderAs,
             }
-            return data;
+            this.$emit('get-table-data' , data);
         },
         async tableReload(){
             this.tableLoad = false;
@@ -191,17 +191,14 @@ export default {
             let element = document.getElementById('checkbox'+value);
             if(!this.selectedRows.includes(value) && element.checked == true){
                 this.selectedRows.push(value);
-
                 const checkboxes    = document.querySelectorAll('.select-rows-checkbox');
                 let countCheckeds   = 0;
                 let countTotal      = checkboxes.length;
-
                 checkboxes.forEach(checkbox => {
                     if(checkbox.checked == true){
                         countCheckeds++;
                     }
                 });
-
                 if(countCheckeds < countTotal){
                     document.getElementById('checkAllBoxes').checked = false;
                 }else if(countCheckeds == countTotal){
@@ -246,45 +243,32 @@ export default {
                     this.sortByIndex = null;
                     break;
             }
-            
-            this.$emit('sort-by',
-                this.getTableSet()
-            );
+            this.emitGetTableData();
             this.paginateInArrayDivider();
         },
         async selectionItemsPerPage(){
             this.pagination.page = 1;
             this.selectedItemsPerPage = await parseInt(document.getElementById('itemsPerPage').value);
-            this.$emit('items-per-page', 
-                this.getTableSet()
-            );
+            this.emitGetTableData();
             this.paginateInArrayDivider();
         },
         search(){
-            this.$emit('searched-value', 
-                this.getTableSet()
-            );
+            this.emitGetTableData();
             this.paginateInArrayDivider();
         },
         specificPaginaton(page){
             this.pagination.page = page;
-            this.$emit('specific-pagination', 
-                this.getTableSet()
-            );
+            this.emitGetTableData();
             this.paginateInArrayDivider();
         },
         paginateNext(){
             this.pagination.page = this.pagination.page+1,
-            this.$emit('paginate',
-                this.getTableSet()
-            );
+            this.emitGetTableData();
             this.paginateInArrayDivider();
         },
         paginatePrevious(){
             this.pagination.page = this.pagination.page-1,
-            this.$emit('paginate', 
-                this.getTableSet()
-            );
+            this.emitGetTableData();
             this.paginateInArrayDivider();
         },
         async paginateInArrayDivider() {
