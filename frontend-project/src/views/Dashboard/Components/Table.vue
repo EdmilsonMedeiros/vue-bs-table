@@ -134,6 +134,16 @@ export default {
         this.paginateInArrayDivider();
     },
     methods: {
+        getTableSet(){
+            let data = {
+                page: this.pagination.page, 
+                value: this.searchedValue, 
+                perpage: this.selectedItemsPerPage,
+                sortBy: this.sortBy,
+                orderAs: this.orderAs,
+            }
+            return data;
+        },
         async tableReload(){
             this.tableLoad = false;
             await setTimeout(() => {
@@ -237,66 +247,46 @@ export default {
                     break;
             }
             
-            this.$emit('sort-by', {
-                page: this.pagination.page, 
-                value: this.searchedValue, 
-                perpage: this.selectedItemsPerPage,
-                sortBy: this.sortBy,
-                orderAs: this.orderAs,
-            });
+            this.$emit('sort-by',
+                this.getTableSet()
+            );
+            this.paginateInArrayDivider();
         },
         async selectionItemsPerPage(){
             this.pagination.page = 1;
             this.selectedItemsPerPage = await parseInt(document.getElementById('itemsPerPage').value);
-            this.$emit('items-per-page', { 
-                page: this.pagination.page,
-                value: this.searchedValue, 
-                perpage: this.selectedItemsPerPage,
-                sortBy: this.sortBy,
-                orderAs: this.orderAs,
-             });
+            this.$emit('items-per-page', 
+                this.getTableSet()
+            );
+            this.paginateInArrayDivider();
         },
         search(){
             console.log('search', this.searchedValue);
-            this.$emit('searched-value', { 
-                value: this.searchedValue, 
-                page: this.pagination.page, 
-                perpage: this.selectedItemsPerPage,
-                sortBy: this.sortBy,
-                orderAs: this.orderAs,
-            });
-            this.paginateInArrayDivider();
-        },
-        paginateNext(){
-            this.$emit('paginate', { 
-                value: this.searchedValue, 
-                page: this.pagination.page+1, 
-                perpage: this.selectedItemsPerPage,
-                sortBy: this.sortBy,
-                orderAs: this.orderAs,
-             });
-            this.paginateInArrayDivider();
-        },
-        paginatePrevious(){
-            this.$emit('paginate', { 
-                value: this.searchedValue, 
-                page: this.pagination.page-1, 
-                perpage: this.selectedItemsPerPage,
-                sortBy: this.sortBy,
-                orderAs: this.orderAs,
-             });
+            this.$emit('searched-value', 
+                this.getTableSet()
+            );
             this.paginateInArrayDivider();
         },
         specificPaginaton(page){
-            this.$emit('specific-pagination', { 
-                value: this.searchedValue, 
-                page: page, 
-                perpage: this.selectedItemsPerPage,
-                sortBy: this.sortBy,
-                orderAs: this.orderAs,
-             });
+            this.pagination.page = page;
+            this.$emit('specific-pagination', 
+                this.getTableSet()
+            );
             this.paginateInArrayDivider();
-
+        },
+        paginateNext(){
+            this.pagination.page = this.pagination.page+1,
+            this.$emit('paginate',
+                this.getTableSet()
+            );
+            this.paginateInArrayDivider();
+        },
+        paginatePrevious(){
+            this.pagination.page = this.pagination.page-1,
+            this.$emit('paginate', 
+                this.getTableSet()
+            );
+            this.paginateInArrayDivider();
         },
         async paginateInArrayDivider() {
             await setTimeout(() => {

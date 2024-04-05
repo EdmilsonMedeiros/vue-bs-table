@@ -11,23 +11,25 @@ import Table from './Components/Table.vue';
         :pagination="rowsTablePagination" 
         :itemsPerPage="itemsTablePerPage"
         :paginationMax="paginationTableLimit"
-
         :totalRegisters="totalRegisters"
         :from="fromRegister"
         :to="toRegister"
-        :buttons="['delete', 'view', 'edit']"
+
+        :buttons="rowButtons"
         :deleteAllButton="true"
         :checkboxes="true"
-        
-        @paginate="getPaginate"
-        @specific-pagination="getSpecificPage"
-        @searched-value="getTableDataSearched" 
+
         @destroy-register="onDestroyRegister"
         @show-register="onShowRegister"
         @edit-register="onEditRegister"
         @destroy-many-registers="onDestroyManyRegisters"
-        @items-per-page="getItemsPerPage"
-        @sort-by="getSortBy"/>
+
+        @paginate="getTableData"
+        @specific-pagination="getTableData"
+        @searched-value="getTableData"
+        @items-per-page="getTableData"
+        @sort-by="getTableData"
+        />
 </template>
 
 <script>
@@ -50,16 +52,11 @@ export default {
     data(){
         return {
             requestUrl: 'http://127.0.0.1:8000/api/getUsers',
-            columnsTableArray: [
-                'Nome', 'Email', 'Data Cadastro', 'Aniversário',
-            ],
-            columnsRegistersTableArray: [
-                'name', 'email', 'created_at', 'birthday',
-            ],
+            columnsTableArray: [ 'Nome', 'Email', 'Data Cadastro', 'Aniversário', ],
+            columnsRegistersTableArray: [ 'name', 'email', 'created_at', 'birthday', ],
+            rowButtons: [ 'delete', 'view', 'edit' ],
             rowsTableObject: [],
-            rowsTablePagination: {
-                page: 0, pages: 0
-            },
+            rowsTablePagination: { page: 0, pages: 0 },
             itemsTablePerPage: 10,
             paginationTableLimit: 3,
             currentTablePage: 1,
@@ -69,7 +66,7 @@ export default {
         }
     },
     mounted(){
-        this.getTableData();
+        this.loadTableData();
     },
     methods: {
         async onDestroyManyRegisters(value){
@@ -84,7 +81,7 @@ export default {
         async onShowRegister(value){
             console.log('onShowRegister', value);
         },
-        async getTableData(){
+        async loadTableData(){
             await axios.post(this.requestUrl, {
                 itemsPerPage: this.itemsTablePerPage,
                 page: this.currentTablePage,
@@ -99,88 +96,10 @@ export default {
                 console.log(error);
             });
         },
-        async getSortBy(data){
-            console.log(data);
-            this.itemsTablePerPage = data.perpage;
+        async getTableData(data){
             await axios.post(this.requestUrl, {
                 itemsPerPage: data.perpage,
                 page: data.page,
-                searched: data.value,
-                sortBy: data.sortBy,
-                orderAs: data.orderAs,
-            }).then( response => {
-                this.totalRegisters             = response.data.total;
-                this.rowsTableObject            = response.data.data; delete this.rowsTableObject.last_page;
-                this.rowsTablePagination.page   = response.data.current_page;
-                this.rowsTablePagination.pages  = response.data.last_page;
-                this.fromRegister               = response.data.from;
-                this.toRegister                 = response.data.to;
-            }).catch( error => {
-                console.log(error);
-            });
-        },
-        async getItemsPerPage(data){
-            this.itemsPerPage = data.perpage;
-            await axios.post(this.requestUrl, {
-                itemsPerPage: data.perpage,
-                page: data.page,
-                searched: data.value,
-                sortBy: data.sortBy,
-                orderAs: data.orderAs,
-            }).then( response => {
-                this.totalRegisters             = response.data.total;
-                this.rowsTableObject            = response.data.data; delete this.rowsTableObject.last_page;
-                this.rowsTablePagination.page   = response.data.current_page;
-                this.rowsTablePagination.pages  = response.data.last_page;
-                this.fromRegister               = response.data.from;
-                this.toRegister                 = response.data.to;
-            }).catch( error => {
-                console.log(error);
-            });
-        },
-        async getPaginate(data){
-            this.itemsTablePerPage = data.perpage;
-            await axios.post(this.requestUrl, {
-                itemsPerPage: data.perpage,
-                page: data.page,
-                searched: data.value,
-                sortBy: data.sortBy,
-                orderAs: data.orderAs,
-            }).then( response => {
-                this.totalRegisters             = response.data.total;
-                this.rowsTableObject            = response.data.data; delete this.rowsTableObject.last_page;
-                this.rowsTablePagination.page   = response.data.current_page;
-                this.rowsTablePagination.pages  = response.data.last_page;
-                this.fromRegister               = response.data.from;
-                this.toRegister                 = response.data.to;
-            }).catch( error => {
-                console.log(error);
-            });
-        },
-        async getSpecificPage(data){
-            this.itemsTablePerPage = data.perpage;
-            await axios.post(this.requestUrl, {
-                itemsPerPage: data.perpage,
-                page: data.page,
-                searched: data.value,
-                sortBy: data.sortBy,
-                orderAs: data.orderAs,
-            }).then( response => {
-                this.totalRegisters             = response.data.total;
-                this.rowsTableObject            = response.data.data; delete this.rowsTableObject.last_page;
-                this.rowsTablePagination.page   = response.data.current_page;
-                this.rowsTablePagination.pages  = response.data.last_page;
-                this.fromRegister               = response.data.from;
-                this.toRegister                 = response.data.to;
-            }).catch( error => {
-                console.log(error);
-            });
-        },
-        async getTableDataSearched(data){
-            this.itemsTablePerPage = data.perpage;
-            await axios.post(this.requestUrl, {
-                itemsPerPage: this.itemsTablePerPage,
-                page: this.currentTablePage,
                 searched: data.value,
                 sortBy: data.sortBy,
                 orderAs: data.orderAs,
