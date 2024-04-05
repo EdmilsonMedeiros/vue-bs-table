@@ -1,50 +1,30 @@
 <script setup>
 import Table from './Components/Table.vue';
-
 </script>
-
 <template>
-    <!-- :itemsPerPage="itemsTablePerPage" -->
     <Table
         :columns="columnsTableArray"
         :columnsRegisters="columnsRegistersTableArray"
         :rows="rowsTableObject" 
         :pagination="rowsTablePagination" 
-        :itemsPerPage="itemsTablePerPage"
         :paginationMax="paginationTableLimit"
         :totalRegisters="totalRegisters"
         :from="fromRegister"
         :to="toRegister"
-
         :buttons="rowButtons"
         :deleteAllButton="true"
         :checkboxes="true"
-
         @destroy-register="onDestroyRegister"
         @show-register="onShowRegister"
         @edit-register="onEditRegister"
         @destroy-many-registers="onDestroyManyRegisters"
-
         @get-table-data="getTableData"
         />
 </template>
-
 <script>
 import axios from 'axios';
 export default {
-    emit: [
-        'get-table-data',
-
-        'sort-by' ,
-        'nextPage', 
-        'specific-pagination', 
-        'searched-value', 
-        'destroy-register', 
-        'edit-register', 
-        'show-register', 
-        'destroy-many-registers', 
-        'items-per-page' 
-    ],
+    emit: [ 'get-table-data', 'destroy-register', 'edit-register', 'show-register', 'destroy-many-registers', ],
     components: {
         Table,
     },
@@ -56,7 +36,6 @@ export default {
             rowButtons: [ 'delete', 'view', 'edit' ],
             rowsTableObject: [],
             rowsTablePagination: { page: 0, pages: 0 },
-            itemsTablePerPage: 10,
             paginationTableLimit: 3,
             totalRegisters: null,
             fromRegister: null,
