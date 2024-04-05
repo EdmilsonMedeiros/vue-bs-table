@@ -60,9 +60,9 @@ export default {
             itemsTablePerPage: 10,
             paginationTableLimit: 3,
             currentTablePage: 1,
-            totalRegisters: Number,
-            fromRegister: Number,
-            toRegister: Number,
+            totalRegisters: null,
+            fromRegister: null,
+            toRegister: null,
         }
     },
     mounted(){

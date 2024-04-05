@@ -102,15 +102,15 @@ export default {
         columns: Object,
         columnsRegisters: Object,
         rows: Object,
-        from: Number,
-        to: Number,
+        from: null,
+        to: null,
         pagination: Object,
         itemsPerPage: Number,
         paginationMax: Number,
         buttons: Array, // [ 'edit', 'delete', 'view']
         checkboxes: Boolean,
         deleteAllButton: Boolean,
-        totalRegisters: Number,
+        totalRegisters: null,
     },
     data(){
         return {
