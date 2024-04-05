@@ -105,7 +105,7 @@ export default {
         from: null,
         to: null,
         pagination: Object,
-        itemsPerPage: Number,
+        itemsPerPage: 10,
         paginationMax: Number,
         buttons: Array, // [ 'edit', 'delete', 'view']
         checkboxes: Boolean,
@@ -118,7 +118,7 @@ export default {
             paginatorDefine: [],
             paginationLimit: this.paginationMax,
             searchedValue: null,
-            selectedItemsPerPage: this.itemsPerPage,
+            selectedItemsPerPage: 10,
             selectedRows: [],
             sortBy: null,
             orderAs: null,

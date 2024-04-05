@@ -4,6 +4,7 @@ import Table from './Components/Table.vue';
 </script>
 
 <template>
+    <!-- :itemsPerPage="itemsTablePerPage" -->
     <Table
         :columns="columnsTableArray"
         :columnsRegisters="columnsRegistersTableArray"
@@ -59,7 +60,6 @@ export default {
             rowsTablePagination: { page: 0, pages: 0 },
             itemsTablePerPage: 10,
             paginationTableLimit: 3,
-            currentTablePage: 1,
             totalRegisters: null,
             fromRegister: null,
             toRegister: null,
@@ -83,8 +83,6 @@ export default {
         },
         async loadTableData(){
             await axios.post(this.requestUrl, {
-                itemsPerPage: this.itemsTablePerPage,
-                page: this.currentTablePage,
             }).then( response => {
                 this.totalRegisters             = response.data.total;
                 this.rowsTableObject            = response.data.data; delete this.rowsTableObject.last_page;

@@ -18,13 +18,14 @@ use App\Models\User;
 
 Route::post('/getUsers', function(Request $request){
     // return $request;
-    $search     = $request->searched ?? null;
-    $page       = $request->page ?? 1;
-    $sortBy     = $request->sortBy ?? null;
-    $orderAs    = $request->orderAs ?? null;
+    $search         = $request->searched ?? null;
+    $page           = $request->page ?? 1;
+    $sortBy         = $request->sortBy ?? null;
+    $orderAs        = $request->orderAs ?? null;
+    $itemsPerPage   = $request->itemsPerPage ?? 10;
 
     $users = User::orderBy($sortBy ?? 'id', $orderAs ?? 'DESC')
-    ->paginate($request->itemsPerPage, ['*'], 'page', $page);
+    ->paginate($itemsPerPage, ['*'], 'page', $page);
     
     if($search != null){
         $users = User::orderBy($sortBy ?? 'id', $orderAs ?? 'DESC')
@@ -32,10 +33,10 @@ Route::post('/getUsers', function(Request $request){
             ->orWhere('email', 'LIKE', "%$search%")
             ->orWhere('created_at', 'LIKE', "%$search%")
             ->orWhere('birthday', 'LIKE', "%$search%")
-            ->paginate($request->itemsPerPage, ['*'], 'page', $page);
+            ->paginate($itemsPerPage, ['*'], 'page', $page);
     }
 
-    $users['last_page'] = User::count() / $request->itemsPerPage;
+    $users['last_page'] = User::count() / $itemsPerPage;
 
     return response()->json($users);
 });
