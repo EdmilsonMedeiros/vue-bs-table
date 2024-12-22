@@ -1,6 +1,6 @@
 ## Tabela com vue, bootstrap e backend Laravel adaptavel
 
-# Execução do projeto:
+### Execução do projeto:
 
     - Clone o repositório
     - Instale o npm no frontend
