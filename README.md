@@ -1,4 +1,4 @@
-## Tabela com vue, bootstrap e backend Laravel adaptavel
+## Tabela adaptavel com vue, bootstrap e backend Laravel
 
 ### Execução do projeto:
 
