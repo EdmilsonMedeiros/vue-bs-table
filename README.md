@@ -11,4 +11,4 @@
     - Sirva o frontend
     - Sirva o backend
 
-_O projeto é para fins de consulta e replicação do código em outros sistemas, então, determinadas funcionalidades como os botões de ações refletem seu comportamento apenas no console pata fim de teste. A ideia é ajusta-las a realidade de cada projeto._
+_O projeto é para fins de consulta e replicação do código em outros sistemas, sendo assim, determinadas funcionalidades como os botões de ações refletem seu comportamento apenas no console para fins de testes. A ideia é ajusta-las a realidade de cada projeto._
